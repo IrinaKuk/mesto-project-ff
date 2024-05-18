@@ -2,7 +2,7 @@
 const template = document.querySelector('#card-template').content;
 
 // @todo: Функция создания карточки
-export function createCard(name, link, deleteCard, handleLikeClick, handleImageClick) {
+export function createCard(name, link, deleteCard, handleLikeClick) {
   const cardElement = template.querySelector('.card').cloneNode(true);
   cardElement.querySelector('.card__title').textContent = name;
   cardElement.querySelector('.card__image').src = link;
