@@ -81,14 +81,6 @@ const newPlaceForm = document.querySelector('.popup__form[name="new-place"]');
 const placeNameInput = newPlaceForm.querySelector('.popup__input_type_card-name');
 const linkInput = newPlaceForm.querySelector('.popup__input_type_url');
 
-//метод вывода и заполнения попапа карточки
-function addImageClickHandler(cardElement) {
-  const cardImage = cardElement.querySelector('.card__image');
-  cardImage.addEventListener('click', () => {
-    openImagePopup(cardImage.src, cardImage.alt);
-  });
-}
-
 function handleNewPlaceFormSubmit(evt) {
   evt.preventDefault();
 
@@ -101,7 +93,6 @@ function handleNewPlaceFormSubmit(evt) {
   closePopup(newCardPopup);
 
   newPlaceForm.reset();
-  addImageClickHandler(newCard); 
 }
 
 newPlaceForm.addEventListener('submit', handleNewPlaceFormSubmit);
@@ -110,5 +101,4 @@ newPlaceForm.addEventListener('submit', handleNewPlaceFormSubmit);
 initialCards.forEach(function(item) {
   const newCard = createCard(item.name, item.link, deleteCard, handleLikeClick, openImagePopup);
   list.append(newCard);
-  addImageClickHandler(newCard);
 });
