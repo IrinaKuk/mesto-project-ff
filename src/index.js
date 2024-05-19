@@ -1,5 +1,6 @@
 import './styles/index.css';
-import { createCard, handleLikeClick, deleteCard, initialCards } from './components/card.js';
+import { initialCards } from './components/cards.js';
+import { createCard, handleLikeClick, deleteCard } from './components/card.js';
 import { openPopup, closePopup } from './components/modal.js';
 
 // @todo: DOM узлы
@@ -80,6 +81,14 @@ const newPlaceForm = document.querySelector('.popup__form[name="new-place"]');
 const placeNameInput = newPlaceForm.querySelector('.popup__input_type_card-name');
 const linkInput = newPlaceForm.querySelector('.popup__input_type_url');
 
+//метод вывода и заполнения попапа карточки
+function addImageClickHandler(cardElement) {
+  const cardImage = cardElement.querySelector('.card__image');
+  cardImage.addEventListener('click', () => {
+    openImagePopup(cardImage.src, cardImage.alt);
+  });
+}
+
 function handleNewPlaceFormSubmit(evt) {
   evt.preventDefault();
 
@@ -92,21 +101,14 @@ function handleNewPlaceFormSubmit(evt) {
   closePopup(newCardPopup);
 
   newPlaceForm.reset();
+  addImageClickHandler(newCard); 
 }
 
 newPlaceForm.addEventListener('submit', handleNewPlaceFormSubmit);
 
 // @todo: Выводим карточки на страницу
 initialCards.forEach(function(item) {
-  list.append(createCard(item.name, item.link, deleteCard, handleLikeClick, openImagePopup));
-});
-
-// @todo: Добавляем обработчик клика к каждой картинке (после добавления карточек)
-list.addEventListener('click', (event) => {
-  if (event.target.classList.contains('card__image')) {
-    const image = event.target;
-    const link = image.src;
-    const alt = image.alt;
-    openImagePopup(link, alt);
-  }
+  const newCard = createCard(item.name, item.link, deleteCard, handleLikeClick, openImagePopup);
+  list.append(newCard);
+  addImageClickHandler(newCard);
 });
