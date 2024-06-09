@@ -1,1 +1,1 @@
-(https://github.com/IrinaKuk/mesto-project-ff)
+https://github.com/IrinaKuk/mesto-project-ff
