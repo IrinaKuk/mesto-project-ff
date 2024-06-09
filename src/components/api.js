@@ -16,11 +16,6 @@ const handleResponse = (res) => {
   return Promise.reject(`Ошибка: ${res.status}`);
 };
 
-// Функция для обработки ошибок
-const handleError = (err) => {
-  console.log(err); 
-};
-
 // Загрузка карточек с сервера
 export const getCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
@@ -28,7 +23,6 @@ export const getCards = () => {
     headers: config.headers,
   })
   .then(handleResponse)
-  .catch(handleError);
 };
 
 // Загрузка информации о пользователе с сервера
@@ -38,12 +32,10 @@ export const getUserInfo = () => {
     headers: config.headers,
   })
   .then(handleResponse)
-  .catch(handleError);
 };
 
 // Обновление информации о пользователе на сервере
-export const updateUserInfo = (name, about, button) => {
-  button.textContent = 'Сохранение...';
+export const updateUserInfo = (name, about) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: config.headers,
@@ -53,10 +45,6 @@ export const updateUserInfo = (name, about, button) => {
     })
   })
   .then(handleResponse)
-  .catch(handleError)
-  .finally(() => {
-    button.textContent = 'Сохранить';
-  });
 };
 
 // Добавление новой карточки
@@ -70,12 +58,10 @@ export const addCard = (name, link) => {
     })
   })
   .then(handleResponse)
-  .catch(handleError);
 };
 
 // Оновление изображения аватара
-export const updateAvatar = (url, button) => {
-  button.textContent = 'Сохранение...';
+export const updateAvatar = (url) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
     headers: config.headers,
@@ -84,10 +70,6 @@ export const updateAvatar = (url, button) => {
     })
   })
   .then(handleResponse)
-  .catch(handleError)
-  .finally(() => {
-    button.textContent = 'Сохранить';
-  });
 };
 
 // Удаление карточки
@@ -97,7 +79,6 @@ export const deleteUserCard = (cardId) => {
     headers: config.headers
   })
   .then(handleResponse)
-  .catch(handleError);
 };
 
 // Выставление лайка
@@ -107,7 +88,6 @@ export const onLike = (cardId) => {
     headers: config.headers,
   })
   .then(handleResponse)
-  .catch(handleError);
 };
 
 // Удаление лайка
@@ -117,5 +97,4 @@ export const offLike = (cardId) => {
     headers: config.headers,
   })
   .then(handleResponse)
-  .catch(handleError);
 };

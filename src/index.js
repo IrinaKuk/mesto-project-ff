@@ -38,13 +38,13 @@ const jobInput = document.querySelector('.popup__input_type_description');
 const avatarInput = document.querySelector('.popup__input_avatar');
 
 // Валидация формы
-const validationConfig = {
+export const validationConfig = {
   formSelector: '.popup__form',
   inputSelector: '.popup__input',
   submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
+  inactiveButtonClass: '.popup__button_disabled',
+  inputErrorClass: '.popup__input_type_error',
+  errorClass: '.popup__error_visible'
 };
 
 enableValidation(validationConfig);
@@ -90,36 +90,44 @@ closeButtons.forEach(button => {
 // Обработчик «отправки» формы
 function handleProfileFormSubmit(evt) {
   evt.preventDefault();
+  const button = profileForm.querySelector('.popup__button');
+  button.textContent = 'Сохранение...';
   const nameValue = nameInput.value;
   const jobValue = jobInput.value;
-  const button = profileForm.querySelector('.popup__button');
-
-  nameProfile.textContent = nameValue;
-  jobProfile.textContent = jobValue;
-
-  closePopup(editPopup);
-  updateUserInfo(nameValue, jobValue, button);
+  updateUserInfo(nameValue, jobValue)
+  .then(newCardData => {
+    nameProfile.textContent = newCardData.name;
+    jobProfile.textContent = newCardData.about;
+    closePopup(editPopup);
+  })
+  .catch(err => console.error(err))
+  .finally(() => {
+    button.textContent = 'Сохранить';
+  });
 }
+ 
+
 
 // Обработчик «отправки» формы добавления карточки
 function handleNewPlaceFormSubmit(evt) {
   evt.preventDefault();
+  const placeNameInput = document.querySelector('.popup__input_type_card-name');
+  const linkInput = document.querySelector('.popup__input_type_url');
   const cardData = {
     name: placeNameInput.value,
     link: linkInput.value,
-    owner: { _id: userId },
-    likes: " "
   };
   const button = newPlaceForm.querySelector('.popup__button');
 
   button.textContent = 'Сохранение...';
-  addCard(cardData.name, cardData.link, button)
+  addCard(cardData.name, cardData.link)
     .then(newCardData => {
-      const newCard = createCard(newCardData, openImagePopup, deleteCard, handleLikeClick);
+      const newCard = createCard(newCardData, newCardData.owner._id, openImagePopup, deleteCard, handleLikeClick);
       list.prepend(newCard);
       closePopup(newCardPopup);
       newPlaceForm.reset();
     })
+    .catch(err => console.error(err))
     .finally(() => {
       button.textContent = 'Сохранить';
     });
@@ -131,9 +139,16 @@ function handleAvatarFormSubmit(evt) {
   const avatarUrl = avatarInput.value;
   const button = editProfileAvatarForm.querySelector('.popup__button');
 
-  editAvatar.style['background-image'] = `url('${avatarUrl}')`;
-  updateAvatar(avatarUrl, button)
-    .then(() => closePopup(popupAvatar));
+  button.textContent = 'Сохранение...'; 
+  updateAvatar(avatarUrl)
+  .then(user => {
+    editAvatar.style['background-image'] = `url('${user.avatar}')`;
+    closePopup(popupAvatar)
+    })
+    .catch(err => console.error(err))
+    .finally(() => { 
+      button.textContent = 'Сохранить'; 
+    }); 
 }
 
 // Выполняем оба запроса одновременно
@@ -147,17 +162,13 @@ Promise.all([getCards(), getUserInfo()])
     userId = userData._id;
     // Отображаем карточки, передавая _id пользователя в функцию createCard
     cardsData.forEach(cardInfo => {
-      const newCard = createCard(cardInfo, userData, openImagePopup, deleteCard, handleLikeClick);
+      const newCard = createCard(cardInfo, userData._id, openImagePopup, deleteCard, handleLikeClick);
       list.append(newCard);
     });
   })
-  .catch(err => console.error(err)); // Обработка общей ошибки
+  .catch(err => console.error(err)) // Обработка общей ошибки
 
 // Прикрепляем обработчики к формам
 profileForm.addEventListener('submit', handleProfileFormSubmit);
 newPlaceForm.addEventListener('submit', handleNewPlaceFormSubmit);
 editProfileAvatarForm.addEventListener('submit', handleAvatarFormSubmit);
-
-// Прикрепляем обработчик к DOMContentLoaded
-document.addEventListener('DOMContentLoaded', () => {
-});
